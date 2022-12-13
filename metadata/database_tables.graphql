@@ -1,0 +1,25 @@
+query GetDatabaseTablesDefinitions($first: Int!, $offset: Int!){
+    databaseTablesConnection(first: $first, offset: $offset) {
+        nodes {
+            __typename
+            id
+            name
+            isEmbedded
+            database {
+                id
+                name
+                connectionType
+                description
+            }
+            schema
+            fullName
+            connectionType
+            description
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        totalCount
+    }
+}

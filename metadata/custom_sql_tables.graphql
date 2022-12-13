@@ -1,0 +1,23 @@
+query GetCustomSQLTablesDefinitions($first: Int!, $offset: Int!){
+    customSQLTablesConnection(first: $first, offset: $offset) {
+        nodes{
+            __typename
+            id
+            name
+            isEmbedded
+            database {
+                id
+                connectionType
+                name
+                description
+            }
+            connectionType
+            description
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        totalCount
+    }
+}
