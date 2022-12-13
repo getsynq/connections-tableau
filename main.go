@@ -75,7 +75,7 @@ func init() {
 		client := graphql.NewClient(fmt.Sprintf("%s/api/metadata/graphql", TableauUrl), internal.HttpClientWithToken(token))
 
 		acceptConnectionTypes := map[string]bool{"bigquery": true, "snowflake": true, "redshift": true}
-		var databaseTables []*metadata.GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable
+		databaseTables := make([]*metadata.GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable, 0)
 
 		perPage := 100
 		page := 0
@@ -90,6 +90,7 @@ func init() {
 				totalPages = resp.DatabaseTablesConnection.TotalCount / perPage
 			}
 			for _, databaseTable := range resp.DatabaseTablesConnection.Nodes {
+				databaseTable := databaseTable
 				if acceptConnectionTypes[databaseTable.ConnectionType] {
 					databaseTables = append(databaseTables, &databaseTable)
 				}
