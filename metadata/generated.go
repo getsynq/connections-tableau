@@ -546,6 +546,8 @@ type GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable stru
 	ConnectionType string `json:"connectionType"`
 	// User modifiable description of this table
 	Description string `json:"description"`
+	// Columns contained in this table
+	Columns []GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn `json:"columns"`
 }
 
 // GetTypename returns GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable.Typename, and is useful for accessing the field via an interface.
@@ -591,6 +593,11 @@ func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable)
 // GetDescription returns GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable.Description, and is useful for accessing the field via an interface.
 func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable) GetDescription() string {
 	return v.Description
+}
+
+// GetColumns returns GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable.Columns, and is useful for accessing the field via an interface.
+func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable) GetColumns() []GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn {
+	return v.Columns
 }
 
 func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable) UnmarshalJSON(b []byte) error {
@@ -644,6 +651,8 @@ type __premarshalGetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDataba
 	ConnectionType string `json:"connectionType"`
 
 	Description string `json:"description"`
+
+	Columns []GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn `json:"columns"`
 }
 
 func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable) MarshalJSON() ([]byte, error) {
@@ -677,7 +686,36 @@ func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTable)
 	retval.FullName = v.FullName
 	retval.ConnectionType = v.ConnectionType
 	retval.Description = v.Description
+	retval.Columns = v.Columns
 	return &retval, nil
+}
+
+// GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn includes the requested fields of the GraphQL type Column.
+// The GraphQL type's documentation follows.
+//
+// GraphQL type for a table column
+type GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn struct {
+	// Unique identifier used by the metadata API.  Not the same as the numeric ID used on server
+	Id string `json:"id"`
+	// Name of column
+	Name string `json:"name"`
+	// Remote type on the database. Types correspond to OLEDB types here: https://referencesource.microsoft.com/#system.data/System/Data/OleDb/OLEDB_Enum.cs,364
+	RemoteType RemoteType `json:"remoteType"`
+}
+
+// GetId returns GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn.Id, and is useful for accessing the field via an interface.
+func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn) GetId() string {
+	return v.Id
+}
+
+// GetName returns GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn.Name, and is useful for accessing the field via an interface.
+func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn) GetName() string {
+	return v.Name
+}
+
+// GetRemoteType returns GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn.RemoteType, and is useful for accessing the field via an interface.
+func (v *GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableColumnsColumn) GetRemoteType() RemoteType {
+	return v.RemoteType
 }
 
 // GetDatabaseTablesDefinitionsDatabaseTablesConnectionNodesDatabaseTableDatabase includes the requested fields of the GraphQL interface Database.
@@ -1000,6 +1038,62 @@ func (v *GetDatabaseTablesDefinitionsResponse) GetDatabaseTablesConnection() Get
 	return v.DatabaseTablesConnection
 }
 
+// Possible types of remote types
+//
+// Types correspond to OLEDB types here: https://referencesource.microsoft.com/#system.data/System/Data/OleDb/OLEDB_Enum.cs,364"
+//
+// Types prefixed with 'WDC' correspond to Tableau's Web Data Connector types:
+// https://tableau.github.io/webdataconnector/docs/api_ref.html#webdataconnectorapi.datatypeenum
+type RemoteType string
+
+const (
+	RemoteTypeArray       RemoteType = "ARRAY"
+	RemoteTypeBool        RemoteType = "BOOL"
+	RemoteTypeBstr        RemoteType = "BSTR"
+	RemoteTypeByref       RemoteType = "BYREF"
+	RemoteTypeBytes       RemoteType = "BYTES"
+	RemoteTypeCy          RemoteType = "CY"
+	RemoteTypeDate        RemoteType = "DATE"
+	RemoteTypeDbdate      RemoteType = "DBDATE"
+	RemoteTypeDbtime      RemoteType = "DBTIME"
+	RemoteTypeDbtimestamp RemoteType = "DBTIMESTAMP"
+	RemoteTypeDecimal     RemoteType = "DECIMAL"
+	RemoteTypeEmpty       RemoteType = "EMPTY"
+	RemoteTypeError       RemoteType = "ERROR"
+	RemoteTypeFiletime    RemoteType = "FILETIME"
+	RemoteTypeGuid        RemoteType = "GUID"
+	RemoteTypeHchapter    RemoteType = "HCHAPTER"
+	RemoteTypeI1          RemoteType = "I1"
+	RemoteTypeI2          RemoteType = "I2"
+	RemoteTypeI4          RemoteType = "I4"
+	RemoteTypeI8          RemoteType = "I8"
+	RemoteTypeIdispatch   RemoteType = "IDISPATCH"
+	RemoteTypeIunknown    RemoteType = "IUNKNOWN"
+	RemoteTypeNull        RemoteType = "NULL"
+	RemoteTypeNumeric     RemoteType = "NUMERIC"
+	RemoteTypePropvariant RemoteType = "PROPVARIANT"
+	RemoteTypeR4          RemoteType = "R4"
+	RemoteTypeR8          RemoteType = "R8"
+	RemoteTypeReserved    RemoteType = "RESERVED"
+	RemoteTypeStr         RemoteType = "STR"
+	RemoteTypeUdt         RemoteType = "UDT"
+	RemoteTypeUi1         RemoteType = "UI1"
+	RemoteTypeUi2         RemoteType = "UI2"
+	RemoteTypeUi4         RemoteType = "UI4"
+	RemoteTypeUi8         RemoteType = "UI8"
+	RemoteTypeVariant     RemoteType = "VARIANT"
+	RemoteTypeVarnumeric  RemoteType = "VARNUMERIC"
+	RemoteTypeVector      RemoteType = "VECTOR"
+	RemoteTypeWdcBool     RemoteType = "WDC_BOOL"
+	RemoteTypeWdcDate     RemoteType = "WDC_DATE"
+	RemoteTypeWdcDatetime RemoteType = "WDC_DATETIME"
+	RemoteTypeWdcFloat    RemoteType = "WDC_FLOAT"
+	RemoteTypeWdcGeometry RemoteType = "WDC_GEOMETRY"
+	RemoteTypeWdcInt      RemoteType = "WDC_INT"
+	RemoteTypeWdcString   RemoteType = "WDC_STRING"
+	RemoteTypeWstr        RemoteType = "WSTR"
+)
+
 // __GetCustomSQLTablesDefinitionsInput is used internally by genqlient
 type __GetCustomSQLTablesDefinitionsInput struct {
 	First  int `json:"first"`
@@ -1104,6 +1198,11 @@ query GetDatabaseTablesDefinitions ($first: Int!, $offset: Int!) {
 			fullName
 			connectionType
 			description
+			columns {
+				id
+				name
+				remoteType
+			}
 		}
 		pageInfo {
 			hasNextPage

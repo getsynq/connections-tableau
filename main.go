@@ -10,6 +10,8 @@ import (
 	"github.com/getsynq/connections-tableau/metadata"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"time"
 )
 
 var TableauUrl string
@@ -101,13 +103,20 @@ func init() {
 			}
 		}
 
+		fmt.Printf("Discovered %d database tables\n", len(databaseTables))
+
 		jsonBytes, err := json.MarshalIndent(databaseTables, "", "  ")
 		if err != nil {
 			panic(errors.Wrap(err, "failed to create json"))
 		}
 
-		fmt.Println("Discovered Database tables:")
-		fmt.Println(string(jsonBytes))
+		fileName := fmt.Sprintf("tables-%s.json", time.Now().UTC().Format(time.RFC3339))
+		err = ioutil.WriteFile(fileName, jsonBytes, 0644)
+		if err != nil {
+			return errors.Wrapf(err, "failed to write file %s", fileName)
+		}
+
+		fmt.Printf("File %s created\n", fileName)
 
 		return nil
 	}
