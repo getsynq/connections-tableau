@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"io/ioutil"
+	"strings"
 	"time"
 )
 
@@ -110,7 +111,7 @@ func init() {
 			panic(errors.Wrap(err, "failed to create json"))
 		}
 
-		fileName := fmt.Sprintf("tables-%s.json", time.Now().UTC().Format(time.RFC3339))
+		fileName := strings.ReplaceAll(fmt.Sprintf("tables-%s.json", time.Now().UTC().Format(time.RFC3339)), ":", "_")
 		err = ioutil.WriteFile(fileName, jsonBytes, 0644)
 		if err != nil {
 			return errors.Wrapf(err, "failed to write file %s", fileName)
