@@ -10,7 +10,8 @@ import (
 	"github.com/getsynq/connections-tableau/metadata"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"io/ioutil"
+	"net/url"
+	"os"
 	"strings"
 	"time"
 )
@@ -67,6 +68,8 @@ func init() {
 
 	rootCmd.RunE = func(cmd *cobra.Command, args []string) error {
 
+		TableauUrl = cleanupUrl(TableauUrl)
+
 		token, _, err := internal.LoginPersonalAccessToken(TableauUrl, TableauSite, TableauTokenName, TableauTokenValue)
 
 		if err != nil {
@@ -112,7 +115,7 @@ func init() {
 		}
 
 		fileName := strings.ReplaceAll(fmt.Sprintf("tables-%s.json", time.Now().UTC().Format(time.RFC3339)), ":", "_")
-		err = ioutil.WriteFile(fileName, jsonBytes, 0644)
+		err = os.WriteFile(fileName, jsonBytes, 0644)
 		if err != nil {
 			return errors.Wrapf(err, "failed to write file %s", fileName)
 		}
@@ -122,6 +125,15 @@ func init() {
 		return nil
 	}
 
+}
+
+func cleanupUrl(in string) string {
+	u, err := url.Parse(in)
+	if err != nil {
+		panic(fmt.Sprintf("failed to parse url %s", in))
+	}
+	u.Fragment = ""
+	return u.String()
 }
 
 //go:generate go run github.com/Khan/genqlient
