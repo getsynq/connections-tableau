@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -27,7 +28,7 @@ type LoginResponseUser struct {
 	ID string `xml:"id,attr"`
 }
 
-func LoginUserPassword(baseURL, site, username, password string) (token, siteId string, err error) {
+func LoginUserPassword(baseURL, apiVersion, site, username, password string) (token, siteId string, err error) {
 
 	var payload = []byte(fmt.Sprintf(`
 <tsRequest>
@@ -37,10 +38,10 @@ func LoginUserPassword(baseURL, site, username, password string) (token, siteId 
 </tsRequest>
 `, username, password, site))
 
-	return login(baseURL, payload)
+	return login(baseURL, apiVersion, payload)
 }
 
-func LoginPersonalAccessToken(baseURL, site, tokenName, tokenValue string) (token, siteId string, err error) {
+func LoginPersonalAccessToken(baseURL, apiVersion, site, tokenName, tokenValue string) (token, siteId string, err error) {
 
 	var payload = []byte(fmt.Sprintf(`
 <tsRequest>
@@ -51,11 +52,49 @@ func LoginPersonalAccessToken(baseURL, site, tokenName, tokenValue string) (toke
 </tsRequest>
 `, tokenName, tokenValue, site))
 
-	return login(baseURL, payload)
+	return login(baseURL, apiVersion, payload)
 }
 
-func login(baseURL string, payload []byte) (token, siteId string, err error) {
-	loginURL := fmt.Sprintf("%s/api/2.3/auth/signin", baseURL)
+type ServerInfoResponse struct {
+	ServerInfo struct {
+		ProductVersion struct {
+			Value string `json:"value"`
+			Build string `json:"build"`
+		} `json:"productVersion"`
+		RestApiVersion string `json:"restApiVersion"`
+	} `json:"serverInfo"`
+}
+
+func GetVersion(connectionUri string) (string, error) {
+	client := &http.Client{}
+	versionReq, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/api/2.4/serverInfo", connectionUri), nil)
+	if err != nil {
+		return "", err
+	}
+	versionReq.Header.Set("accept", "application/json")
+	versionResp, err := client.Do(versionReq)
+	if err != nil {
+		return "", err
+	}
+	defer versionResp.Body.Close()
+	versionRespJson, err := io.ReadAll(versionResp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	serverInfoResponse := &ServerInfoResponse{}
+	err = json.Unmarshal(versionRespJson, serverInfoResponse)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("Tableau server version: %s\n", serverInfoResponse.ServerInfo.ProductVersion.Value)
+	fmt.Printf("Tableau API version: %s\n", serverInfoResponse.ServerInfo.RestApiVersion)
+
+	return serverInfoResponse.ServerInfo.RestApiVersion, nil
+}
+
+func login(baseURL, apiVersion string, payload []byte) (token, siteId string, err error) {
+	loginURL := fmt.Sprintf("%s/api/%s/auth/signin", baseURL, apiVersion)
 	req, err := http.NewRequest(http.MethodPost, loginURL, bytes.NewBuffer(payload))
 	if err != nil {
 		return "", "", fmt.Errorf("failed to create login request: %w", err)
